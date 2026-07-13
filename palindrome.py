@@ -5,4 +5,5 @@ if text == text[::-1]:
 else:
     print("Not a palindrome")
 
+    
      
