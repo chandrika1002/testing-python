@@ -1,0 +1,239 @@
+If you're a beginner, the best way to learn REST APIs is by creating a **Student Management API**. It covers all the basic REST operations (GET, POST, PUT, DELETE) without requiring a database.
+
+## Project Structure
+
+```text
+student_api/
+│
+├── main.py
+├── requirements.txt
+└── venv/
+```
+
+---
+
+## Step 1: Install FastAPI
+
+Open the VS Code terminal.
+
+```bash
+pip install fastapi uvicorn
+```
+
+---
+
+## Step 2: Create `main.py`
+
+Copy and paste the following code:
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="Student REST API")
+
+# Student Model
+class Student(BaseModel):
+    id: int
+    name: str
+    age: int
+    course: str
+
+# Temporary Database (List)
+students = [
+    {"id": 1, "name": "Imran", "age": 25, "course": "Python"},
+    {"id": 2, "name": "Rahul", "age": 24, "course": "Java"},
+    {"id": 3, "name": "John", "age": 23, "course": "DevOps"}
+]
+
+# Home API
+@app.get("/")
+def home():
+    return {"message": "Welcome to Student REST API"}
+
+# Get All Students
+@app.get("/students")
+def get_students():
+    return students
+
+# Get Student by ID
+@app.get("/students/{student_id}")
+def get_student(student_id: int):
+    for student in students:
+        if student["id"] == student_id:
+            return student
+    return {"message": "Student not found"}
+
+# Add Student
+@app.post("/students")
+def add_student(student: Student):
+    students.append(student.dict())
+    return {
+        "message": "Student Added Successfully",
+        "student": student
+    }
+
+# Update Student
+@app.put("/students/{student_id}")
+def update_student(student_id: int, updated_student: Student):
+    for index, student in enumerate(students):
+        if student["id"] == student_id:
+            students[index] = updated_student.dict()
+            return {
+                "message": "Student Updated Successfully",
+                "student": updated_student
+            }
+    return {"message": "Student not found"}
+
+# Delete Student
+@app.delete("/students/{student_id}")
+def delete_student(student_id: int):
+    for student in students:
+        if student["id"] == student_id:
+            students.remove(student)
+            return {"message": "Student Deleted Successfully"}
+    return {"message": "Student not found"}
+```
+
+---
+
+## Step 3: Run the API
+
+```bash
+uvicorn main:app --reload
+```
+
+You should see:
+
+```text
+INFO: Uvicorn running on http://127.0.0.1:8000
+```
+
+---
+
+## Step 4: Test the API
+
+Open your browser and visit:
+
+### Home
+
+```
+http://127.0.0.1:8000/
+```
+
+Response:
+
+```json
+{
+  "message": "Welcome to Student REST API"
+}
+```
+
+---
+
+### Get All Students
+
+```
+GET http://127.0.0.1:8000/students
+```
+
+---
+
+### Get Student by ID
+
+```
+GET http://127.0.0.1:8000/students/1
+```
+
+---
+
+### Add a Student
+
+```
+POST http://127.0.0.1:8000/students
+```
+
+Request Body:
+
+```json
+{
+    "id": 4,
+    "name": "David",
+    "age": 26,
+    "course": "AWS"
+}
+```
+
+---
+
+### Update a Student
+
+```
+PUT http://127.0.0.1:8000/students/4
+```
+
+Request Body:
+
+```json
+{
+    "id": 4,
+    "name": "David",
+    "age": 27,
+    "course": "GCP"
+}
+```
+
+---
+
+### Delete a Student
+
+```
+DELETE http://127.0.0.1:8000/students/4
+```
+
+---
+
+## Step 5: Interactive API Documentation
+
+FastAPI automatically creates API documentation.
+
+Open:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+You can:
+
+* Test each endpoint without writing any frontend code.
+* See the request and response formats.
+* Learn how REST APIs work interactively.
+
+---
+
+## REST API Methods Explained
+
+| Method | Endpoint         | Purpose          |
+| ------ | ---------------- | ---------------- |
+| GET    | `/students`      | Get all students |
+| GET    | `/students/{id}` | Get one student  |
+| POST   | `/students`      | Create a student |
+| PUT    | `/students/{id}` | Update a student |
+| DELETE | `/students/{id}` | Delete a student |
+
+---
+
+## What You'll Learn
+
+By building this project, you'll practice:
+
+* Creating a REST API with FastAPI.
+* Understanding HTTP methods (GET, POST, PUT, DELETE).
+* Using path parameters (e.g., `/students/1`).
+* Validating request data with Pydantic.
+* Working with JSON requests and responses.
+* Running and testing APIs in VS Code.
+* Using FastAPI's built-in Swagger UI.
+
+This is an excellent first REST API project because it's small enough to understand but introduces the core concepts you'll use in real-world Python API development. Once you're comfortable with it, the next step is to replace the in-memory `students` list with a real database such as SQLite or MySQL.
+
