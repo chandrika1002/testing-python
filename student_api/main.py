@@ -64,3 +64,4 @@ def delete_student(student_id: int):
             students.remove(student)
             return {"message": "Student Deleted Successfully"}
     return {"message": "Student not found"}
+#
